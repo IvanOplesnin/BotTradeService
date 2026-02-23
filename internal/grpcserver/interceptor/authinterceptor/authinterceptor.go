@@ -38,7 +38,7 @@ func NewAuthInterceptor(deps AuthInterceptorDeps) *AuthInterceptor {
 		},
 		BotMethods: map[string]struct{}{
 			"/bottrade.auth.v1.AuthService/LinkTelegram":  {},
-			"/bottrade.auth.v1.AuthService/TelegramLogin": {},
+			"/bottrade.auth.v1.AuthService/TelegramAuth": {},
 		},
 	}
 }
