@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package bottrade.auth.v1;
+
+option go_package = "github.com/IvanOplesnin/BotTradeService.git/gen/authv1;authv1";
+
+service AuthService {
+  // Web
+  rpc Register(RegisterRequest) returns (AuthResponse);
+  rpc Login(LoginRequest) returns (AuthResponse);
+
+  // Web: выдаём код для привязки Telegram (требует JWT)
+  rpc CreateTelegramLinkCode(CreateTelegramLinkCodeRequest) returns (CreateTelegramLinkCodeResponse);
+
+  // Telegram bot: привязка Telegram по коду (требует bot-signature)
+  rpc LinkTelegram(LinkTelegramRequest) returns (LinkTelegramResponse);
+
+  // Telegram bot: логин по telegram_user_id (требует bot-signature)
+  rpc TelegramAuth(TelegramLoginRequest) returns (AuthResponse);
+}
+
+message RegisterRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message AuthResponse {
+  string access_token = 1;
+  int64  expires_in_sec = 2;
+}
+
+message CreateTelegramLinkCodeRequest {}
+
+message CreateTelegramLinkCodeResponse {
+  string code = 1;
+  int64 expires_in_sec = 2;
+}
+
+message LinkTelegramRequest {
+  string code = 1;
+
+  int64 telegram_user_id = 2;
+  int64 chat_id = 3;
+
+  string username = 4;
+  string first_name = 5;
+  string last_name = 6;
+}
+
+message LinkTelegramResponse {
+  bool ok = 1;
+}
+
+message TelegramLoginRequest {
+  int64 telegram_user_id = 1;
+  int64 chat_id = 2;
+
+  string username = 3;
+  string first_name = 4;
+  string last_name = 5;
+}
