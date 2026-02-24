@@ -20,3 +20,8 @@ type BotMeta struct {
 	Signature string
 }
 
+type User struct {
+	ID           int32
+	Email        string
+	HashPassword string
+}

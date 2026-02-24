@@ -16,3 +16,7 @@ var (
 
 type errorString string
 func (e errorString) Error() string { return string(e) }
+
+var (
+	ErrNoRows = errorString("no rows")
+)
