@@ -10,7 +10,7 @@ import (
 
 type Hasher interface {
 	Hash(password string) (hash string, err error)
-	ComapareHash(password, hash string) (match bool, err error)
+	CompareHash(password, hash string) (match bool, err error)
 }
 
 type Tokener interface {
@@ -47,21 +47,25 @@ func (a *AuthUsecase) Register(ctx context.Context, email, password string) (mod
 	if err != nil {
 		return models.AuthTokens{}, err
 	}
+
 	user := models.User{
 		Email:        email,
 		HashPassword: hash,
 	}
+
 	userID, err := a.repo.CreateUser(ctx, user)
-	if errors.Is(err, modelerrors.ErrNoRows) {
-		return models.AuthTokens{}, modelerrors.ErrEmailTaken
-	}
 	if err != nil {
+		if errors.Is(err, modelerrors.ErrEmailTaken) {
+			return models.AuthTokens{}, modelerrors.ErrEmailTaken
+		}
 		return models.AuthTokens{}, err
 	}
+
 	accessToken, expInSec, err := a.tokener.CreateToken(userID)
 	if err != nil {
 		return models.AuthTokens{}, err
 	}
+
 	return models.AuthTokens{
 		AccessToken:  accessToken,
 		ExpiresInSec: expInSec,
@@ -70,20 +74,24 @@ func (a *AuthUsecase) Register(ctx context.Context, email, password string) (mod
 
 func (a *AuthUsecase) Login(ctx context.Context, email, password string) (models.AuthTokens, error) {
 	u, err := a.repo.GetByEmail(ctx, email)
-	if errors.Is(err, modelerrors.ErrNoRows) {
-		return models.AuthTokens{}, modelerrors.ErrInvalidCredentials
+	if err != nil {
+		if errors.Is(err, modelerrors.ErrNoRows) {
+			return models.AuthTokens{}, modelerrors.ErrInvalidCredentials
+		}
+		return models.AuthTokens{}, err
 	}
+	ok, err := a.hasher.CompareHash(password, u.HashPassword)
 	if err != nil {
 		return models.AuthTokens{}, err
 	}
-	if ok, err := a.hasher.ComapareHash(password, u.HashPassword); !ok {
-		if err != nil {
-			return models.AuthTokens{}, err
-		}
+	if !ok {
 		return models.AuthTokens{}, modelerrors.ErrInvalidCredentials
 	}
-	accessToken, expInSec, err := a.tokener.CreateToken(u.ID)
 
+	accessToken, expInSec, err := a.tokener.CreateToken(u.ID)
+	if err != nil {
+		return models.AuthTokens{}, err
+	}
 	return models.AuthTokens{
 		AccessToken:  accessToken,
 		ExpiresInSec: expInSec,
