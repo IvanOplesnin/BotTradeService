@@ -2,3 +2,4 @@
 *.exe
 diff.txt
 *config.yaml
+*.env

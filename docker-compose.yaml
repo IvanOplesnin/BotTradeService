@@ -1,0 +1,45 @@
+services:
+  db:
+    image: postgres:15
+    container_name: database
+    working_dir: /db
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5433:5432"
+    volumes:
+      - tradeservicedb:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - treadeservice
+  
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    ports:
+      - "5051:80"
+    depends_on:
+      - db
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - treadeservice
+
+volumes:
+  tradeservicedb:
+  pgadmin_data:
+
+networks:
+  treadeservice:

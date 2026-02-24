@@ -14,7 +14,7 @@ type Hasher interface {
 }
 
 type Tokener interface {
-	CreateToken(userID int32) (accessToken string, exp int64, err error)
+	Token(userID int32) (accessToken string, exp int64, err error)
 }
 
 type AuthRepo interface {
@@ -61,7 +61,7 @@ func (a *AuthUsecase) Register(ctx context.Context, email, password string) (mod
 		return models.AuthTokens{}, err
 	}
 
-	accessToken, expInSec, err := a.tokener.CreateToken(userID)
+	accessToken, expInSec, err := a.tokener.Token(userID)
 	if err != nil {
 		return models.AuthTokens{}, err
 	}
@@ -88,7 +88,7 @@ func (a *AuthUsecase) Login(ctx context.Context, email, password string) (models
 		return models.AuthTokens{}, modelerrors.ErrInvalidCredentials
 	}
 
-	accessToken, expInSec, err := a.tokener.CreateToken(u.ID)
+	accessToken, expInSec, err := a.tokener.Token(u.ID)
 	if err != nil {
 		return models.AuthTokens{}, err
 	}
