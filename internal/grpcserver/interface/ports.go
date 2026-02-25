@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/IvanOplesnin/BotTradeService.git/internal/app/models"
+	"github.com/IvanOplesnin/BotTradeService.git/internal/domain/models"
 )
 
 type AuthUsecase interface {

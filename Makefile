@@ -1,4 +1,4 @@
-.PHONY: proto gen up down
+.PHONY: proto gen up down run
 
 proto: gen
 
@@ -13,3 +13,6 @@ up:
 
 down:
 	goose -env .env down
+
+run:
+	ENV_FILE=./.env ./run.sh

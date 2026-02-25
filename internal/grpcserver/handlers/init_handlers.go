@@ -1,4 +1,4 @@
-package handlers
+package grpchandlers
 
 import (
 	"github.com/IvanOplesnin/BotTradeService.git/gen/authv1"
@@ -8,9 +8,18 @@ import (
 	"google.golang.org/grpc"
 )
 
-func InitAuthHandlers(svcUseCase grpcports.AuthUsecase, authInterceptorDeps authinterceptor.AuthInterceptorDeps) *grpc.Server {
-	authHandler := NewAuthHandler(svcUseCase)
-	authInterceptor := authinterceptor.NewAuthInterceptor(authInterceptorDeps)
+type InitHandlerDeps struct {
+	AuthUseCase   grpcports.AuthUsecase
+	BotVerifier   grpcports.BotVerifier
+	TokenVerifier grpcports.TokenVerifier
+}
+
+func InitHandlers(deps InitHandlerDeps) *grpc.Server {
+	authHandler := NewAuthHandler(deps.AuthUseCase)
+	authInterceptor := authinterceptor.NewAuthInterceptor(authinterceptor.AuthInterceptorDeps{
+		BotVerifier:   deps.BotVerifier,
+		TokenVerifier: deps.TokenVerifier,
+	})
 	loggerInterceptor := loggerinterceptor.NewLoggerInterceptor()
 
 	server := grpc.NewServer(

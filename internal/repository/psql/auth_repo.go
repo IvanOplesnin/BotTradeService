@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/IvanOplesnin/BotTradeService.git/internal/app/models"
 	modelerrors "github.com/IvanOplesnin/BotTradeService.git/internal/domain/errors"
+	"github.com/IvanOplesnin/BotTradeService.git/internal/domain/models"
 	"github.com/IvanOplesnin/BotTradeService.git/internal/repository/psql/query"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"

@@ -43,7 +43,7 @@ func (i *LoggerInterceptor) Unary() grpc.UnaryServerInterceptor {
 
 		st := status.Convert(err)
 		code := st.Code()
-		msg := st.Message()
+		// _ := st.Message()
 
 		respSize := protoSize(resp)
 		duration := time.Since(start)
@@ -62,9 +62,9 @@ func (i *LoggerInterceptor) Unary() grpc.UnaryServerInterceptor {
 			// gRPC codes: NotFound/InvalidArgument обычно Warn, Internal/Unavailable — Error
 			switch code {
 			case codes.InvalidArgument, codes.NotFound, codes.Unauthenticated, codes.PermissionDenied, codes.AlreadyExists:
-				entry.WithField("error", msg).Warn("grpc request handled")
+				entry.WithField("error", err.Error()).Warn("grpc request handled")
 			default:
-				entry.WithField("error", msg).Error("grpc request handled")
+				entry.WithField("error", err.Error()).Error("grpc request handled")
 			}
 			return resp, err
 		}

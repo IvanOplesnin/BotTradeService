@@ -3,8 +3,8 @@ package authinterceptor
 import (
 	"context"
 
-	"github.com/IvanOplesnin/BotTradeService.git/internal/app/models"
 	modelerrors "github.com/IvanOplesnin/BotTradeService.git/internal/domain/errors"
+	"github.com/IvanOplesnin/BotTradeService.git/internal/domain/models"
 	"github.com/IvanOplesnin/BotTradeService.git/internal/grpcserver/authctx"
 	"github.com/IvanOplesnin/BotTradeService.git/internal/grpcserver/grpcutil"
 	grpcports "github.com/IvanOplesnin/BotTradeService.git/internal/grpcserver/interface"
@@ -37,7 +37,7 @@ func NewAuthInterceptor(deps AuthInterceptorDeps) *AuthInterceptor {
 			"/bottrade.auth.v1.AuthService/Login":    {},
 		},
 		BotMethods: map[string]struct{}{
-			"/bottrade.auth.v1.AuthService/LinkTelegram":  {},
+			"/bottrade.auth.v1.AuthService/LinkTelegram": {},
 			"/bottrade.auth.v1.AuthService/TelegramAuth": {},
 		},
 	}

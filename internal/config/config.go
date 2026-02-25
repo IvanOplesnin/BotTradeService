@@ -20,8 +20,8 @@ type Logger struct {
 }
 
 type App struct {
-	Adress string `yaml:"adress"`
-	Dsn    string `yaml:"dsn"`
+	Address string `yaml:"adress"`
+	Dsn     string `yaml:"dsn"`
 }
 
 type Security struct {
@@ -32,14 +32,14 @@ type Security struct {
 type PasswordHash struct {
 	Algorithm string `yaml:"algorithm"`
 
-	MemoryKiB    uint32 `yaml:"memory_kib"`
-	Iterations   uint32 `yaml:"iterations"`          // или yaml:"iterations"
-	Parallelism  uint8  `yaml:"parallelism"`
-	SaltLen      uint32 `yaml:"salt_len"`
-	KeyLen       uint32 `yaml:"key_len"`
+	MemoryKiB   uint32 `yaml:"memory_kib"`
+	Iterations  uint32 `yaml:"iterations"` // или yaml:"iterations"
+	Parallelism uint8  `yaml:"parallelism"`
+	SaltLen     uint32 `yaml:"salt_len"`
+	KeyLen      uint32 `yaml:"key_len"`
 
 	MaxMemoryKiB   uint32 `yaml:"max_memory_kib"`
-	MaxIterations  uint32 `yaml:"max_iterations"`     // или max_iterations
+	MaxIterations  uint32 `yaml:"max_iterations"` // или max_iterations
 	MaxParallelism uint8  `yaml:"max_parallelism"`
 }
 
@@ -90,7 +90,7 @@ func NewConfig(fileCfg string) (*Config, error) {
 	cfg.Security.Tokener.Secret = []byte(secret)
 
 	// --- Минимальная валидация ---
-	if cfg.App.Adress == "" {
+	if cfg.App.Address == "" {
 		return nil, fmt.Errorf("app.adress is required")
 	}
 	if cfg.App.Dsn == "" {

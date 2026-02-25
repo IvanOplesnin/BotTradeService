@@ -50,7 +50,7 @@ type JwtClaims struct {
 }
 
 // CreateToken — соответствует твоему интерфейсу Tokener.CreateToken(...)
-func (t *Tokener) CreateToken(userID int32) (accessToken string, expInSec int64, err error) {
+func (t *Tokener) Token(userID int32) (accessToken string, expInSec int64, err error) {
 	now := time.Now()
 
 	claims := JwtClaims{

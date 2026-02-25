@@ -1,4 +1,4 @@
-package handlers
+package grpchandlers
 
 import (
 	"context"
@@ -7,17 +7,19 @@ import (
 	"time"
 
 	"github.com/IvanOplesnin/BotTradeService.git/gen/authv1"
-	"github.com/IvanOplesnin/BotTradeService.git/internal/app/models"
 	modelerrors "github.com/IvanOplesnin/BotTradeService.git/internal/domain/errors"
+	"github.com/IvanOplesnin/BotTradeService.git/internal/domain/models"
 	"github.com/IvanOplesnin/BotTradeService.git/internal/grpcserver/authctx"
 	grpcports "github.com/IvanOplesnin/BotTradeService.git/internal/grpcserver/interface"
+	"github.com/IvanOplesnin/BotTradeService.git/internal/logger"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type AuthHandler struct {
 	authv1.UnimplementedAuthServiceServer
-	svc grpcports.AuthUsecase
+	svc             grpcports.AuthUsecase
+	codeTgTtlMinute int64
 }
 
 func NewAuthHandler(svc grpcports.AuthUsecase) *AuthHandler {
@@ -37,6 +39,7 @@ func (h *AuthHandler) Register(ctx context.Context, req *authv1.RegisterRequest)
 
 	toks, err := h.svc.Register(ctx, email, pass)
 	if err != nil {
+		logger.Log.Errorf("register error")
 		return nil, mapAuthErr(err)
 	}
 
@@ -74,8 +77,7 @@ func (h *AuthHandler) CreateTelegramLinkCode(ctx context.Context, _ *authv1.Crea
 		return nil, status.Error(codes.Unauthenticated, "missing user context")
 	}
 
-	// TTL можно конфигом, а не константой
-	ttl := 10 * time.Minute
+	ttl := time.Duration(h.codeTgTtlMinute) * time.Minute
 
 	code, expSec, err := h.svc.CreateTelegramLinkCode(ctx, userID, ttl)
 	if err != nil {
@@ -142,7 +144,7 @@ func (h *AuthHandler) TelegramAuth(
 	// сервис делает "login-or-register" (если tg еще не привязан — создает юзера и привязку)
 	toks, err := h.svc.TelegramAuth(ctx, tg)
 	if err != nil {
-		return nil, mapAuthErr(err) 
+		return nil, mapAuthErr(err)
 	}
 
 	return &authv1.AuthResponse{

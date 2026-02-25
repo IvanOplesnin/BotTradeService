@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/IvanOplesnin/BotTradeService.git/internal/app/models"
 	modelerrors "github.com/IvanOplesnin/BotTradeService.git/internal/domain/errors"
+	"github.com/IvanOplesnin/BotTradeService.git/internal/domain/models"
 )
 
 type Hasher interface {
